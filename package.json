@@ -1,13 +1,15 @@
 {
   "name": "@matrixai/pagination",
   "version": "0.0.1",
+  "description": "Offset-based and cursor-based pagination utilities",
   "repository": {
     "type": "git",
     "url": "https://github.com/MatrixAI/js-pagination.git"
   },
   "main": "dist/index.js",
-  "source": "src/index.ts",
+  "browser": "dist/browser.js",
   "types": "dist/index.d.ts",
+  "source": "src/index.ts",
   "scripts": {
     "build": "webpack --mode=production",
     "dev": "webpack --mode=development --watch"
@@ -16,9 +18,10 @@
     "awesome-typescript-loader": "^5.2.1",
     "source-map-loader": "^0.2.4",
     "ts-node": "^8.1.0",
-    "typescript": "^3.4.5",
-    "webpack": "^4.32.0",
-    "webpack-cli": "^3.3.2"
+    "typescript": "^3.6.3",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9"
   },
-  "author": "Roger Qiu <roger.qiu@matrix.ai>"
+  "author": "Roger Qiu <roger.qiu@matrix.ai>",
+  "license": "Apache-2.0"
 }
