@@ -7,9 +7,8 @@
     "url": "https://github.com/MatrixAI/js-pagination.git"
   },
   "main": "dist/index.js",
-  "browser": "dist/browser.js",
+  "browser": "dist/browser/index.js",
   "types": "dist/index.d.ts",
-  "source": "src/index.ts",
   "scripts": {
     "build": "webpack --mode=production",
     "dev": "webpack --mode=development --watch"

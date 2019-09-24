@@ -2,10 +2,15 @@ const path = require('path');
 const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
 
 const commonConfig = {
-  entry: './src/index.ts',
+  target: 'node',
+  entry: {
+    index: './src/index.ts',
+    offset: './src/offset.ts',
+    cursor: './src/cursor.ts'
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'index.js',
+    filename: '[name].js',
     libraryTarget: 'commonjs2'
   },
   devtool: 'source-map',
@@ -25,11 +30,15 @@ const commonConfig = {
 };
 
 const browserConfig = {
-  entry: './src/index.ts',
+  target: 'web',
+  entry: {
+    index: './src/index.ts',
+    offset: './src/offset.ts',
+    cursor: './src/cursor.ts'
+  },
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'browser.js',
-    library: 'pagination',
+    path: path.resolve(__dirname, 'dist/browser'),
+    filename: '[name].js',
     libraryTarget: 'umd'
   },
   devtool: 'source-map',

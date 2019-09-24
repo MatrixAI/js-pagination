@@ -1,5 +1,14 @@
-module.exports =
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else {
+		var a = factory();
+		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
+	}
+})(window, function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -82,158 +91,10 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/index.ts");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/offset.ts");
 /******/ })
 /************************************************************************/
 /******/ ({
-
-/***/ "./src/cursor.ts":
-/*!***********************!*\
-  !*** ./src/cursor.ts ***!
-  \***********************/
-/*! exports provided: pageIndex, pageCount, pageFirst, pageLast, pages, pagesI, pageCurr, pagePrev, pageNext, pageSeek, pageCurrM, pagePrevM, pageNextM, pageSeekM */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageIndex", function() { return pageIndex; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCount", function() { return pageCount; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageFirst", function() { return pageFirst; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageLast", function() { return pageLast; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pages", function() { return pages; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagesI", function() { return pagesI; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurr", function() { return pageCurr; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrev", function() { return pagePrev; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNext", function() { return pageNext; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeek", function() { return pageSeek; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurrM", function() { return pageCurrM; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrevM", function() { return pagePrevM; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextM", function() { return pageNextM; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeekM", function() { return pageSeekM; });
-/**
- * Offset pagination
- *
- * @remarks
- *
- * Offset pagination relies on a seek and limit number.
- *
- * Consider the resource we are paginating is:
- *
- * ```ts
- * ['A', 'B', 'C', 'D']
- * ```
- *
- * The seek index starts at 0.
- * The limit is entire length of the returned pagination view.
- * A seek and limit of `[0, 2]` would return `['A', 'B']`.
- *
- * The page numbers start at 1. So by using `[0, 2]`
- * we get page numbers of `[1, 2]`. We still refer to these numbers
- * with the page index.
- *
- * Note that the total represents the total number of items
- * when the pagination was fetched. The true total of items may have
- * changed on the server side since fetching a pagination.
- */
-function pageIndex(seek, limit) {
-    return Math.floor(seek / limit);
-}
-function pageCount(total, limit) {
-    return Math.ceil(total / limit);
-}
-function pageFirst(index) {
-    return index === 0;
-}
-function pageLast(index, count) {
-    return index === (count - 1);
-}
-function pages(pageCount) {
-    return Array.from({ length: pageCount }, (_, i) => i + 1);
-}
-function* pagesI(pageCount) {
-    for (let i = 1; i <= pageCount; ++i) {
-        yield i;
-    }
-}
-function pageCurr(page, limit) {
-    const limitNew = (limit != null) ? limit : page.limit;
-    const indexNew = pageIndex(page.seek, limitNew);
-    const seekNew = indexNew * limitNew;
-    return { seek: seekNew, limit: limitNew };
-}
-;
-function pagePrev(page, limit) {
-    const limitNew = (limit != null) ? limit : page.limit;
-    let indexNew = pageIndex(page.seek, limitNew);
-    indexNew = Math.max(indexNew - 1, 0);
-    const seekNew = indexNew * limitNew;
-    return { seek: seekNew, limit: limitNew };
-}
-function pageNext(page, limit) {
-    const limitNew = (limit != null) ? limit : page.limit;
-    let indexNew = pageIndex(page.seek, limitNew);
-    indexNew = indexNew + 1;
-    const seekNew = indexNew * limitNew;
-    return { seek: seekNew, limit: limitNew };
-}
-function pageSeek(page, seek, limit) {
-    const limitNew = (limit != null) ? limit : page.limit;
-    let indexNew = pageIndex(seek, limitNew);
-    indexNew = Math.max(indexNew, 0);
-    const seekNew = indexNew * limitNew;
-    return { seek: seekNew, limit: limitNew };
-}
-function pageCurrM(page, action, limit) {
-    const patch = pageCurr(page, limit);
-    return processAction(action, patch);
-}
-function pagePrevM(page, action, limit) {
-    const patch = pageCurr(page, limit);
-    return processAction(action, patch);
-}
-function pageNextM(page, action, limit) {
-    const patch = pageCurr(page, limit);
-    return processAction(action, patch);
-}
-function pageSeekM(page, action, seek, limit) {
-    const patch = pageCurr(page, limit);
-    return processAction(action, patch);
-}
-function processAction(action, patch) {
-    const result = action(patch.seek, patch.limit);
-    if (result instanceof Promise) {
-        return result.then((result_) => {
-            return Object.assign(Object.assign({}, patch), result_);
-        });
-    }
-    else {
-        return Object.assign(Object.assign({}, patch), result);
-    }
-}
-
-
-
-/***/ }),
-
-/***/ "./src/index.ts":
-/*!**********************!*\
-  !*** ./src/index.ts ***!
-  \**********************/
-/*! exports provided: offset, cursor */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _offset__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./offset */ "./src/offset.ts");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "offset", function() { return _offset__WEBPACK_IMPORTED_MODULE_0__; });
-/* harmony import */ var _cursor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cursor */ "./src/cursor.ts");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "cursor", function() { return _cursor__WEBPACK_IMPORTED_MODULE_1__; });
-
-
-
-
-
-/***/ }),
 
 /***/ "./src/offset.ts":
 /*!***********************!*\
@@ -357,4 +218,5 @@ function processAction(action, patch) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.js.map
+});
+//# sourceMappingURL=offset.js.map

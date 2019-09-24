@@ -1,3 +1,3 @@
-import * as paginationOffset from './paginationOffset';
-import * as paginationCursor from './paginationCursor';
-export { paginationOffset, paginationCursor };
+import * as offset from './offset';
+import * as cursor from './cursor';
+export { offset, cursor };
