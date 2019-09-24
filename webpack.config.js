@@ -5,8 +5,8 @@ const commonConfig = {
   target: 'node',
   entry: {
     index: './src/index.ts',
-    offset: './src/offset.ts',
-    cursor: './src/cursor.ts'
+    Offset: './src/Offset.ts',
+    Cursor: './src/Cursor.ts'
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -36,8 +36,8 @@ const browserConfig = {
   target: 'web',
   entry: {
     index: './src/index.ts',
-    offset: './src/offset.ts',
-    cursor: './src/cursor.ts'
+    Offset: './src/Offset.ts',
+    Cursor: './src/Cursor.ts'
   },
   output: {
     path: path.resolve(__dirname, 'dist/browser'),

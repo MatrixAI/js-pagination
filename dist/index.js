@@ -330,10 +330,10 @@ function processAction(action, patch) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _offset__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "offset", function() { return _offset__WEBPACK_IMPORTED_MODULE_0__; });
-/* harmony import */ var _cursor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "cursor", function() { return _cursor__WEBPACK_IMPORTED_MODULE_1__; });
+/* harmony import */ var _Offset__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "Offset", function() { return _Offset__WEBPACK_IMPORTED_MODULE_0__; });
+/* harmony import */ var _Cursor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "Cursor", function() { return _Cursor__WEBPACK_IMPORTED_MODULE_1__; });
 
 
 

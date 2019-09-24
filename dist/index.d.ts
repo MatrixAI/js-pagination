@@ -1,3 +1,3 @@
-import * as offset from './offset';
-import * as cursor from './cursor';
-export { offset, cursor };
+import * as Offset from './Offset';
+import * as Cursor from './Cursor';
+export { Offset, Cursor };

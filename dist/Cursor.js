@@ -204,4 +204,4 @@ function processAction(action, patch) {
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=cursor.js.map
+//# sourceMappingURL=Cursor.js.map

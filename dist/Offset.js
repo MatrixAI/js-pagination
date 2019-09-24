@@ -210,4 +210,4 @@ function processAction(action, patch) {
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=offset.js.map
+//# sourceMappingURL=Offset.js.map
