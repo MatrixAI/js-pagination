@@ -91,18 +91,26 @@ module.exports =
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageIndex", function() { return pageIndex; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCount", function() { return pageCount; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageFirst", function() { return pageFirst; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageLast", function() { return pageLast; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pages", function() { return pages; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagesI", function() { return pagesI; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurr", function() { return pageCurr; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrev", function() { return pagePrev; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNext", function() { return pageNext; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeek", function() { return pageSeek; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurrM", function() { return pageCurrM; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrevM", function() { return pagePrevM; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextM", function() { return pageNextM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeekM", function() { return pageSeekM; });
 /**
- * Cursor pagination
+ * Offset pagination
  *
  * @remarks
  *
- * Cursor pagination relies on unique orderable seek key.
+ * Offset pagination relies on a seek and limit number.
  *
  * Consider the resource we are paginating is:
  *
@@ -110,89 +118,88 @@ __webpack_require__.r(__webpack_exports__);
  * ['A', 'B', 'C', 'D']
  * ```
  *
- * Assume that the seek key is `[0, 1, 2, 3]`.
- * Using `order = true`, `seek = 0` and `limit = 2`, you would get `['B', 'C']`.
- * Using `order = false`, `seek = 2` and `limit = 2`, you would get `['A', 'B']`.
- * Using `order = null`, `seekAfter = 1`, `seekBefore = 3`, you would get `['C']`.
+ * The seek index starts at 0.
+ * The limit is entire length of the returned pagination view.
+ * A seek and limit of `[0, 2]` would return `['A', 'B']`.
  *
- * Cursor pagination does not allow random access of the pages.
- * You can however randomly access if you know the seek key you want.
+ * The page numbers start at 1. So by using `[0, 2]`
+ * we get page numbers of `[1, 2]`. We still refer to these numbers
+ * with the page index.
+ *
+ * Note that the total represents the total number of items
+ * when the pagination was fetched. The true total of items may have
+ * changed on the server side since fetching a pagination.
  */
-function pageCurr(page, limit) {
-    if (page.order === true) {
-        const limitNew = (limit != null) ? limit : page.limit;
-        return {
-            order: true,
-            seek: page.seek,
-            limit: limitNew
-        };
-    }
-    else if (page.order === false) {
-        const limitNew = (limit != null) ? limit : page.limit;
-        return {
-            order: false,
-            seek: page.seek,
-            limit: limitNew
-        };
-    }
-    else {
-        return {
-            order: null,
-            seekAfter: page.seekAfter,
-            seekBefore: page.seekBefore
-        };
+function pageIndex(seek, limit) {
+    return Math.floor(seek / limit);
+}
+function pageCount(total, limit) {
+    return Math.ceil(total / limit);
+}
+function pageFirst(index) {
+    return index === 0;
+}
+function pageLast(index, count) {
+    return index === (count - 1);
+}
+function pages(pageCount) {
+    return Array.from({ length: pageCount }, (_, i) => i + 1);
+}
+function* pagesI(pageCount) {
+    for (let i = 1; i <= pageCount; ++i) {
+        yield i;
     }
 }
+function pageCurr(page, limit) {
+    const limitNew = (limit != null) ? limit : page.limit;
+    const indexNew = pageIndex(page.seek, limitNew);
+    const seekNew = indexNew * limitNew;
+    return { seek: seekNew, limit: limitNew };
+}
+;
 function pagePrev(page, limit) {
-    let limitNew;
-    if (page.order === null) {
-        limitNew = (limit != null) ? limit : page.count;
-    }
-    else {
-        limitNew = (limit != null) ? limit : page.limit;
-    }
-    return {
-        order: false,
-        seek: page.seekFirst,
-        limit: limitNew
-    };
+    const limitNew = (limit != null) ? limit : page.limit;
+    let indexNew = pageIndex(page.seek, limitNew);
+    indexNew = Math.max(indexNew - 1, 0);
+    const seekNew = indexNew * limitNew;
+    return { seek: seekNew, limit: limitNew };
 }
 function pageNext(page, limit) {
-    let limitNew;
-    if (page.order === null) {
-        limitNew = (limit != null) ? limit : page.count;
-    }
-    else {
-        limitNew = (limit != null) ? limit : page.limit;
-    }
-    return {
-        order: true,
-        seek: page.seekLast,
-        limit: limitNew
-    };
+    const limitNew = (limit != null) ? limit : page.limit;
+    let indexNew = pageIndex(page.seek, limitNew);
+    indexNew = indexNew + 1;
+    const seekNew = indexNew * limitNew;
+    return { seek: seekNew, limit: limitNew };
+}
+function pageSeek(page, seek, limit) {
+    const limitNew = (limit != null) ? limit : page.limit;
+    let indexNew = pageIndex(seek, limitNew);
+    indexNew = Math.max(indexNew, 0);
+    const seekNew = indexNew * limitNew;
+    return { seek: seekNew, limit: limitNew };
 }
 function pageCurrM(page, action, limit) {
     const patch = pageCurr(page, limit);
     return processAction(action, patch);
 }
 function pagePrevM(page, action, limit) {
-    const patch = pagePrev(page, limit);
+    const patch = pageCurr(page, limit);
     return processAction(action, patch);
 }
 function pageNextM(page, action, limit) {
-    const patch = pageNext(page, limit);
+    const patch = pageCurr(page, limit);
+    return processAction(action, patch);
+}
+function pageSeekM(page, action, seek, limit) {
+    const patch = pageCurr(page, limit);
     return processAction(action, patch);
 }
 function processAction(action, patch) {
-    let result;
-    if (patch.order === null) {
-        result = action(patch.order, patch.seekAfter, patch.seekBefore);
-    }
-    else {
-        result = action(patch.order, patch.seek, patch.limit);
-    }
+    const result = action(patch.seek, patch.limit);
     if (result instanceof Promise) {
-        return result.then((result_) => (Object.assign(Object.assign({}, patch), result_)));
+        return result.then((result_) => {
+            return Object.assign(Object.assign({}, patch), result_);
+        });
     }
     else {
         return Object.assign(Object.assign({}, patch), result);

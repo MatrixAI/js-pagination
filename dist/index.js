@@ -91,122 +91,6 @@ module.exports =
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurr", function() { return pageCurr; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrev", function() { return pagePrev; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNext", function() { return pageNext; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurrM", function() { return pageCurrM; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrevM", function() { return pagePrevM; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextM", function() { return pageNextM; });
-/**
- * Cursor pagination
- *
- * @remarks
- *
- * Cursor pagination relies on unique orderable seek key.
- *
- * Consider the resource we are paginating is:
- *
- * ```ts
- * ['A', 'B', 'C', 'D']
- * ```
- *
- * Assume that the seek key is `[0, 1, 2, 3]`.
- * Using `order = true`, `seek = 0` and `limit = 2`, you would get `['B', 'C']`.
- * Using `order = false`, `seek = 2` and `limit = 2`, you would get `['A', 'B']`.
- * Using `order = null`, `seekAfter = 1`, `seekBefore = 3`, you would get `['C']`.
- *
- * Cursor pagination does not allow random access of the pages.
- * You can however randomly access if you know the seek key you want.
- */
-function pageCurr(page, limit) {
-    if (page.order === true) {
-        const limitNew = (limit != null) ? limit : page.limit;
-        return {
-            order: true,
-            seek: page.seek,
-            limit: limitNew
-        };
-    }
-    else if (page.order === false) {
-        const limitNew = (limit != null) ? limit : page.limit;
-        return {
-            order: false,
-            seek: page.seek,
-            limit: limitNew
-        };
-    }
-    else {
-        return {
-            order: null,
-            seekAfter: page.seekAfter,
-            seekBefore: page.seekBefore
-        };
-    }
-}
-function pagePrev(page, limit) {
-    let limitNew;
-    if (page.order === null) {
-        limitNew = (limit != null) ? limit : page.count;
-    }
-    else {
-        limitNew = (limit != null) ? limit : page.limit;
-    }
-    return {
-        order: false,
-        seek: page.seekFirst,
-        limit: limitNew
-    };
-}
-function pageNext(page, limit) {
-    let limitNew;
-    if (page.order === null) {
-        limitNew = (limit != null) ? limit : page.count;
-    }
-    else {
-        limitNew = (limit != null) ? limit : page.limit;
-    }
-    return {
-        order: true,
-        seek: page.seekLast,
-        limit: limitNew
-    };
-}
-function pageCurrM(page, action, limit) {
-    const patch = pageCurr(page, limit);
-    return processAction(action, patch);
-}
-function pagePrevM(page, action, limit) {
-    const patch = pagePrev(page, limit);
-    return processAction(action, patch);
-}
-function pageNextM(page, action, limit) {
-    const patch = pageNext(page, limit);
-    return processAction(action, patch);
-}
-function processAction(action, patch) {
-    let result;
-    if (patch.order === null) {
-        result = action(patch.order, patch.seekAfter, patch.seekBefore);
-    }
-    else {
-        result = action(patch.order, patch.seek, patch.limit);
-    }
-    if (result instanceof Promise) {
-        return result.then((result_) => (Object.assign(Object.assign({}, patch), result_)));
-    }
-    else {
-        return Object.assign(Object.assign({}, patch), result);
-    }
-}
-
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageIndex", function() { return pageIndex; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCount", function() { return pageCount; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageFirst", function() { return pageFirst; });
@@ -316,6 +200,122 @@ function processAction(action, patch) {
         return result.then((result_) => {
             return Object.assign(Object.assign({}, patch), result_);
         });
+    }
+    else {
+        return Object.assign(Object.assign({}, patch), result);
+    }
+}
+
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurr", function() { return pageCurr; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrev", function() { return pagePrev; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNext", function() { return pageNext; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurrM", function() { return pageCurrM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrevM", function() { return pagePrevM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextM", function() { return pageNextM; });
+/**
+ * Cursor pagination
+ *
+ * @remarks
+ *
+ * Cursor pagination relies on unique orderable seek key.
+ *
+ * Consider the resource we are paginating is:
+ *
+ * ```ts
+ * ['A', 'B', 'C', 'D']
+ * ```
+ *
+ * Assume that the seek key is `[0, 1, 2, 3]`.
+ * Using `order = true`, `seek = 0` and `limit = 2`, you would get `['B', 'C']`.
+ * Using `order = false`, `seek = 2` and `limit = 2`, you would get `['A', 'B']`.
+ * Using `order = null`, `seekAfter = 1`, `seekBefore = 3`, you would get `['C']`.
+ *
+ * Cursor pagination does not allow random access of the pages.
+ * You can however randomly access if you know the seek key you want.
+ */
+function pageCurr(page, limit) {
+    if (page.order === true) {
+        const limitNew = (limit != null) ? limit : page.limit;
+        return {
+            order: true,
+            seek: page.seek,
+            limit: limitNew
+        };
+    }
+    else if (page.order === false) {
+        const limitNew = (limit != null) ? limit : page.limit;
+        return {
+            order: false,
+            seek: page.seek,
+            limit: limitNew
+        };
+    }
+    else {
+        return {
+            order: null,
+            seekAfter: page.seekAfter,
+            seekBefore: page.seekBefore
+        };
+    }
+}
+function pagePrev(page, limit) {
+    let limitNew;
+    if (page.order === null) {
+        limitNew = (limit != null) ? limit : page.count;
+    }
+    else {
+        limitNew = (limit != null) ? limit : page.limit;
+    }
+    return {
+        order: false,
+        seek: page.seekFirst,
+        limit: limitNew
+    };
+}
+function pageNext(page, limit) {
+    let limitNew;
+    if (page.order === null) {
+        limitNew = (limit != null) ? limit : page.count;
+    }
+    else {
+        limitNew = (limit != null) ? limit : page.limit;
+    }
+    return {
+        order: true,
+        seek: page.seekLast,
+        limit: limitNew
+    };
+}
+function pageCurrM(page, action, limit) {
+    const patch = pageCurr(page, limit);
+    return processAction(action, patch);
+}
+function pagePrevM(page, action, limit) {
+    const patch = pagePrev(page, limit);
+    return processAction(action, patch);
+}
+function pageNextM(page, action, limit) {
+    const patch = pageNext(page, limit);
+    return processAction(action, patch);
+}
+function processAction(action, patch) {
+    let result;
+    if (patch.order === null) {
+        result = action(patch.order, patch.seekAfter, patch.seekBefore);
+    }
+    else {
+        result = action(patch.order, patch.seek, patch.limit);
+    }
+    if (result instanceof Promise) {
+        return result.then((result_) => (Object.assign(Object.assign({}, patch), result_)));
     }
     else {
         return Object.assign(Object.assign({}, patch), result);

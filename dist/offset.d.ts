@@ -1,9 +1,9 @@
 /**
- * Cursor pagination
+ * Offset pagination
  *
  * @remarks
  *
- * Cursor pagination relies on unique orderable seek key.
+ * Offset pagination relies on a seek and limit number.
  *
  * Consider the resource we are paginating is:
  *
@@ -11,70 +11,52 @@
  * ['A', 'B', 'C', 'D']
  * ```
  *
- * Assume that the seek key is `[0, 1, 2, 3]`.
- * Using `order = true`, `seek = 0` and `limit = 2`, you would get `['B', 'C']`.
- * Using `order = false`, `seek = 2` and `limit = 2`, you would get `['A', 'B']`.
- * Using `order = null`, `seekAfter = 1`, `seekBefore = 3`, you would get `['C']`.
+ * The seek index starts at 0.
+ * The limit is entire length of the returned pagination view.
+ * A seek and limit of `[0, 2]` would return `['A', 'B']`.
  *
- * Cursor pagination does not allow random access of the pages.
- * You can however randomly access if you know the seek key you want.
+ * The page numbers start at 1. So by using `[0, 2]`
+ * we get page numbers of `[1, 2]`. We still refer to these numbers
+ * with the page index.
+ *
+ * Note that the total represents the total number of items
+ * when the pagination was fetched. The true total of items may have
+ * changed on the server side since fetching a pagination.
  */
-declare type Pagination<I extends Iterable<[S, any]>, S> = Readonly<{
-    order: true;
-    seek: S;
+declare type Pagination<I extends Iterable<any>> = Readonly<{
+    seek: number;
     limit: number;
-    count: number;
-    seekFirst: S;
-    seekLast: S;
-    items: I;
-} | {
-    order: false;
-    seek: S;
-    limit: number;
-    count: number;
-    seekFirst: S;
-    seekLast: S;
-    items: I;
-} | {
-    order: null;
-    seekAfter: S;
-    seekBefore: S;
-    seekFirst: S;
-    seekLast: S;
+    total: number;
     count: number;
     items: I;
 }>;
-declare type PatchSeekLimit<S> = Readonly<{
-    order: boolean;
-    seek: S;
+declare type Patch = Readonly<{
+    seek: number;
     limit: number;
 }>;
-declare type PatchSeekAfterBefore<S> = Readonly<{
-    order: null;
-    seekAfter: S;
-    seekBefore: S;
-}>;
-declare type ActionAsync<I, S> = {
-    (order: boolean, seek: S, limit: number): Promise<ActionResult<I, S>>;
-    (order: null, seekAfter: S, seekBefore: S): Promise<ActionResult<I, S>>;
-};
-declare type ActionSync<I, S> = {
-    (order: boolean, seek: S, limit: number): ActionResult<I, S>;
-    (order: null, seekAfter: S, seekBefore: S): ActionResult<I, S>;
-};
-declare type ActionResult<I, S> = Readonly<{
+declare type ActionAsync<I> = (seek: number, limit: number) => Promise<ActionResult<I>>;
+declare type ActionSync<I> = (seek: number, limit: number) => ActionResult<I>;
+declare type ActionResult<I> = Readonly<{
+    total: number;
     count: number;
-    seekFirst: S;
-    seekLast: S;
     items: I;
 }>;
-declare function pageCurr<I extends Iterable<[S, any]>, S>(page: Pagination<I, S>, limit?: number): PatchSeekLimit<S> | PatchSeekAfterBefore<S>;
-declare function pagePrev<I extends Iterable<[S, any]>, S>(page: Pagination<I, S>, limit?: number): PatchSeekLimit<S>;
-declare function pageNext<I extends Iterable<[S, any]>, S>(page: Pagination<I, S>, limit?: number): PatchSeekLimit<S>;
-declare function pageCurrM<I extends Iterable<[S, any]>, S>(page: Pagination<I, S>, action: ActionAsync<I, S>, limit?: number): Promise<Pagination<I, S>>;
-declare function pageCurrM<I extends Iterable<[S, any]>, S>(page: Pagination<I, S>, action: ActionSync<I, S>, limit?: number): Pagination<I, S>;
-declare function pagePrevM<I extends Iterable<[S, any]>, S>(page: Pagination<I, S>, action: ActionAsync<I, S>, limit?: number): Promise<Pagination<I, S>>;
-declare function pagePrevM<I extends Iterable<[S, any]>, S>(page: Pagination<I, S>, action: ActionSync<I, S>, limit?: number): Pagination<I, S>;
-declare function pageNextM<I extends Iterable<[S, any]>, S>(page: Pagination<I, S>, action: ActionAsync<I, S>, limit?: number): Promise<Pagination<I, S>>;
-declare function pageNextM<I extends Iterable<[S, any]>, S>(page: Pagination<I, S>, action: ActionSync<I, S>, limit?: number): Pagination<I, S>;
-export { Pagination, PatchSeekLimit, PatchSeekAfterBefore, ActionAsync, ActionSync, ActionResult, pageCurr, pagePrev, pageNext, pageCurrM, pagePrevM, pageNextM };
+declare function pageIndex(seek: number, limit: number): number;
+declare function pageCount(total: number, limit: number): number;
+declare function pageFirst(index: number): boolean;
+declare function pageLast(index: number, count: number): boolean;
+declare function pages(pageCount: number): Array<number>;
+declare function pagesI(pageCount: number): IterableIterator<number>;
+declare function pageCurr<I extends Iterable<any>>(page: Pagination<I>, limit?: number): Patch;
+declare function pagePrev<I extends Iterable<any>>(page: Pagination<I>, limit?: number): Patch;
+declare function pageNext<I extends Iterable<any>>(page: Pagination<I>, limit?: number): Patch;
+declare function pageSeek<I extends Iterable<any>>(page: Pagination<I>, seek: number, limit?: number): Patch;
+declare function pageCurrM<I extends Iterable<any>>(page: Pagination<I>, action: ActionAsync<I>, limit?: number): Promise<Pagination<I>>;
+declare function pageCurrM<I extends Iterable<any>>(page: Pagination<I>, action: ActionSync<I>, limit?: number): Pagination<I>;
+declare function pagePrevM<I extends Iterable<any>>(page: Pagination<I>, action: ActionAsync<I>, limit?: number): Promise<Pagination<I>>;
+declare function pagePrevM<I extends Iterable<any>>(page: Pagination<I>, action: ActionSync<I>, limit?: number): Pagination<I>;
+declare function pageNextM<I extends Iterable<any>>(page: Pagination<I>, action: ActionAsync<I>, limit?: number): Promise<Pagination<I>>;
+declare function pageNextM<I extends Iterable<any>>(page: Pagination<I>, action: ActionSync<I>, limit?: number): Pagination<I>;
+declare function pageSeekM<I extends Iterable<any>>(page: Pagination<I>, action: ActionAsync<I>, seek: number, limit?: number): Promise<Pagination<I>>;
+declare function pageSeekM<I extends Iterable<any>>(page: Pagination<I>, action: ActionSync<I>, seek: number, limit?: number): Pagination<I>;
+export { Pagination, Patch, ActionAsync, ActionSync, ActionResult, pageIndex, pageCount, pageFirst, pageLast, pages, pagesI, pageCurr, pagePrev, pageNext, pageSeek, pageCurrM, pagePrevM, pageNextM, pageSeekM };

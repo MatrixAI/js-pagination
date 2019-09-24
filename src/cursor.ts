@@ -1,9 +1,9 @@
 /**
- * Offset pagination
+ * Cursor pagination
  *
  * @remarks
  *
- * Offset pagination relies on a seek and limit number.
+ * Cursor pagination relies on unique orderable seek key.
  *
  * Consider the resource we are paginating is:
  *
@@ -11,186 +11,190 @@
  * ['A', 'B', 'C', 'D']
  * ```
  *
- * The seek index starts at 0.
- * The limit is entire length of the returned pagination view.
- * A seek and limit of `[0, 2]` would return `['A', 'B']`.
+ * Assume that the seek key is `[0, 1, 2, 3]`.
+ * Using `order = true`, `seek = 0` and `limit = 2`, you would get `['B', 'C']`.
+ * Using `order = false`, `seek = 2` and `limit = 2`, you would get `['A', 'B']`.
+ * Using `order = null`, `seekAfter = 1`, `seekBefore = 3`, you would get `['C']`.
  *
- * The page numbers start at 1. So by using `[0, 2]`
- * we get page numbers of `[1, 2]`. We still refer to these numbers
- * with the page index.
- *
- * Note that the total represents the total number of items
- * when the pagination was fetched. The true total of items may have
- * changed on the server side since fetching a pagination.
+ * Cursor pagination does not allow random access of the pages.
+ * You can however randomly access if you know the seek key you want.
  */
 
-type Pagination<I extends Iterable<any>> = Readonly<{
-  seek: number;
+type Pagination<I extends Iterable<[S, any]>, S> = Readonly<{
+  order: true;
+  seek: S;
   limit: number;
-  total: number;
+  count: number;
+  seekFirst: S;
+  seekLast: S;
+  items: I;
+} | {
+  order: false;
+  seek: S;
+  limit: number;
+  count: number;
+  seekFirst: S;
+  seekLast: S;
+  items: I;
+} | {
+  order: null;
+  seekAfter: S;
+  seekBefore: S;
+  seekFirst: S;
+  seekLast: S;
   count: number;
   items: I;
 }>;
 
-type Patch = Readonly<{
-  seek: number;
-  limit: number;
+type PatchSeekLimit<S> = Readonly<{
+  order: boolean,
+  seek: S,
+  limit: number
+}>;
+type PatchSeekAfterBefore<S> = Readonly<{
+  order: null,
+  seekAfter: S,
+  seekBefore: S
 }>;
 
-type ActionAsync<I> = (seek: number, limit: number) => Promise<ActionResult<I>>;
-type ActionSync<I> = (seek: number, limit: number) => ActionResult<I>;
-type ActionResult<I> = Readonly<{
-  total: number,
+type ActionAsync<I, S> = {
+  (order: boolean, seek: S, limit: number): Promise<ActionResult<I, S>>
+  (order: null, seekAfter: S, seekBefore:S): Promise<ActionResult<I, S>>
+};
+type ActionSync<I, S> = {
+  (order: boolean, seek: S, limit: number): ActionResult<I, S>
+  (order: null, seekAfter: S, seekBefore: S): ActionResult<I, S>
+};
+type ActionResult<I, S> = Readonly<{
   count: number,
+  seekFirst: S,
+  seekLast: S,
   items: I
 }>;
 
-function pageIndex (seek: number, limit: number): number {
-  return Math.floor(seek / limit);
-}
-
-function pageCount (total: number, limit: number): number {
-  return Math.ceil(total / limit);
-}
-
-function pageFirst (index: number): boolean {
-  return index === 0;
-}
-
-function pageLast (index: number, count: number): boolean {
-  return index === (count - 1);
-}
-
-function pages (pageCount: number): Array<number> {
-  return Array.from({length: pageCount}, (_, i) => i + 1);
-}
-
-function* pagesI (pageCount: number): IterableIterator<number> {
-  for (let i = 1; i <= pageCount; ++i) {
-      yield i;
+function pageCurr<I extends Iterable<[S, any]>, S> (
+  page: Pagination<I, S>,
+  limit?: number
+): PatchSeekLimit<S> | PatchSeekAfterBefore<S> {
+  if (page.order === true) {
+    const limitNew = (limit != null) ? limit : page.limit;
+    return {
+      order: true,
+      seek: page.seek,
+      limit: limitNew
+    };
+  } else if (page.order === false) {
+    const limitNew = (limit != null) ? limit : page.limit;
+    return {
+      order: false,
+      seek: page.seek,
+      limit: limitNew
+    };
+  } else {
+    return {
+      order: null,
+      seekAfter: page.seekAfter,
+      seekBefore: page.seekBefore
+    };
   }
 }
 
-function pageCurr<I extends Iterable<any>> (
-  page: Pagination<I>,
+function pagePrev<I extends Iterable<[S, any]>, S> (
+  page: Pagination<I, S>,
   limit?: number
-): Patch {
-  const limitNew = (limit != null) ? limit : page.limit;
-  const indexNew = pageIndex(page.seek, limitNew);
-  const seekNew = indexNew * limitNew;
-  return {seek: seekNew, limit: limitNew};
-};
-
-function pagePrev<I extends Iterable<any>> (
-  page: Pagination<I>,
-  limit?: number
-): Patch {
-  const limitNew = (limit != null) ? limit : page.limit;
-  let indexNew = pageIndex(page.seek, limitNew);
-  indexNew = Math.max(indexNew - 1, 0);
-  const seekNew = indexNew * limitNew;
-  return {seek: seekNew, limit: limitNew};
+): PatchSeekLimit<S> {
+  let limitNew;
+  if (page.order === null) {
+    limitNew = (limit != null) ? limit : page.count;
+  } else {
+    limitNew = (limit != null) ? limit : page.limit;
+  }
+  return {
+    order: false,
+    seek: page.seekFirst,
+    limit: limitNew
+  };
 }
 
-function pageNext<I extends Iterable<any>> (
-  page: Pagination<I>,
+function pageNext<I extends Iterable<[S, any]>, S> (
+  page: Pagination<I, S>,
   limit?: number
-): Patch {
-  const limitNew = (limit != null) ? limit : page.limit;
-  let indexNew = pageIndex(page.seek, limitNew);
-  indexNew = indexNew + 1;
-  const seekNew = indexNew * limitNew;
-  return {seek: seekNew, limit: limitNew};
+): PatchSeekLimit<S> {
+  let limitNew;
+  if (page.order === null) {
+    limitNew = (limit != null) ? limit : page.count;
+  } else {
+    limitNew = (limit != null) ? limit : page.limit;
+  }
+  return {
+    order: true,
+    seek: page.seekLast,
+    limit: limitNew
+  };
 }
 
-function pageSeek<I extends Iterable<any>> (
-  page: Pagination<I>,
-  seek: number,
+function pageCurrM<I extends Iterable<[S, any]>, S> (
+  page: Pagination<I, S>,
+  action: ActionAsync<I, S>,
   limit?: number
-): Patch {
-  const limitNew = (limit != null) ? limit : page.limit;
-  let indexNew = pageIndex(seek, limitNew);
-  indexNew = Math.max(indexNew, 0);
-  const seekNew = indexNew * limitNew;
-  return {seek: seekNew, limit: limitNew};
-}
-
-function pageCurrM<I extends Iterable<any>> (
-  page: Pagination<I>,
-  action: ActionAsync<I>,
+): Promise<Pagination<I, S>>;
+function pageCurrM<I extends Iterable<[S, any]>, S> (
+  page: Pagination<I, S>,
+  action: ActionSync<I, S>,
   limit?: number
-): Promise<Pagination<I>>;
-function pageCurrM<I extends Iterable<any>> (
-  page: Pagination<I>,
-  action: ActionSync<I>,
-  limit?: number
-): Pagination<I>;
+): Pagination<I, S>;
 function pageCurrM (page: any, action: any, limit?: any): any {
   const patch = pageCurr(page, limit);
   return processAction(action, patch);
 }
 
-function pagePrevM<I extends Iterable<any>> (
-  page: Pagination<I>,
-  action: ActionAsync<I>,
+function pagePrevM<I extends Iterable<[S, any]>, S> (
+  page: Pagination<I, S>,
+  action: ActionAsync<I, S>,
   limit?: number
-): Promise<Pagination<I>>;
-function pagePrevM<I extends Iterable<any>> (
-  page: Pagination<I>,
-  action: ActionSync<I>,
+): Promise<Pagination<I, S>>;
+function pagePrevM<I extends Iterable<[S, any]>, S> (
+  page: Pagination<I, S>,
+  action: ActionSync<I, S>,
   limit?: number
-): Pagination<I>;
+): Pagination<I, S>;
 function pagePrevM (page: any, action: any, limit?: any): any {
-  const patch = pageCurr(page, limit);
+  const patch = pagePrev(page, limit);
   return processAction(action, patch);
 }
 
-function pageNextM<I extends Iterable<any>> (
-  page: Pagination<I>,
-  action: ActionAsync<I>,
+function pageNextM<I extends Iterable<[S, any]>, S> (
+  page: Pagination<I, S>,
+  action: ActionAsync<I, S>,
   limit?: number
-): Promise<Pagination<I>>;
-function pageNextM<I extends Iterable<any>> (
-  page: Pagination<I>,
-  action: ActionSync<I>,
+): Promise<Pagination<I, S>>;
+function pageNextM<I extends Iterable<[S, any]>, S> (
+  page: Pagination<I, S>,
+  action: ActionSync<I, S>,
   limit?: number
-): Pagination<I>;
+): Pagination<I, S>;
 function pageNextM (page: any, action: any, limit?: any): any {
-  const patch = pageCurr(page, limit);
+  const patch = pageNext(page, limit);
   return processAction(action, patch);
 }
 
-function pageSeekM<I extends Iterable<any>> (
-  page: Pagination<I>,
-  action: ActionAsync<I>,
-  seek: number,
-  limit?: number
-): Promise<Pagination<I>>;
-function pageSeekM<I extends Iterable<any>> (
-  page: Pagination<I>,
-  action: ActionSync<I>,
-  seek: number,
-  limit?: number
-): Pagination<I>;
-function pageSeekM (page: any, action: any, seek: any, limit?: any): any {
-  const patch = pageCurr(page, limit);
-  return processAction(action, patch);
-}
-
-function processAction<I extends Iterable<any>> (
-  action: ActionAsync<I>,
-  patch: Patch,
-): Promise<Pagination<I>>;
-function processAction<I extends Iterable<any>> (
-  action: ActionSync<I>,
-  patch: Patch
-): Pagination<I>;
+function processAction<I extends Iterable<[S, any]>, S> (
+  action: ActionAsync<I, S>,
+  patch: PatchSeekLimit<S> | PatchSeekAfterBefore<S>
+): Promise<Pagination<I, S>>;
+function processAction<I extends Iterable<[S, any]>, S> (
+  action: ActionSync<I, S>,
+  patch: PatchSeekLimit<S> | PatchSeekAfterBefore<S>
+): Pagination<I, S>;
 function processAction (action: any, patch: any): any {
-  const result = action(patch.seek, patch.limit);
+  let result;
+  if (patch.order === null) {
+    result = action(patch.order, patch.seekAfter, patch.seekBefore);
+  } else {
+    result = action(patch.order, patch.seek, patch.limit);
+  }
   if (result instanceof Promise) {
-    return result.then((result_) => {
-      return {...patch, ...result_};
-    });
+    return result.then((result_) => ({...patch, ...result_}));
   } else {
     return {...patch, ...result};
   }
@@ -198,22 +202,15 @@ function processAction (action: any, patch: any): any {
 
 export {
   Pagination,
-  Patch,
+  PatchSeekLimit,
+  PatchSeekAfterBefore,
   ActionAsync,
   ActionSync,
   ActionResult,
-  pageIndex,
-  pageCount,
-  pageFirst,
-  pageLast,
-  pages,
-  pagesI,
   pageCurr,
   pagePrev,
   pageNext,
-  pageSeek,
   pageCurrM,
   pagePrevM,
-  pageNextM,
-  pageSeekM
+  pageNextM
 };
