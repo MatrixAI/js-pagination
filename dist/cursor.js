@@ -82,16 +82,12 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/cursor.ts");
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ "./src/cursor.ts":
-/*!***********************!*\
-  !*** ./src/cursor.ts ***!
-  \***********************/
-/*! exports provided: pageIndex, pageCount, pageFirst, pageLast, pages, pagesI, pageCurr, pagePrev, pageNext, pageSeek, pageCurrM, pagePrevM, pageNextM, pageSeekM */
+/******/ ([
+/* 0 */,
+/* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -214,6 +210,5 @@ function processAction(action, patch) {
 
 
 /***/ })
-
-/******/ });
+/******/ ]);
 //# sourceMappingURL=cursor.js.map

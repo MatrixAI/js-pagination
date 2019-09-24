@@ -26,7 +26,10 @@ const commonConfig = {
       { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
     ]
   },
-  plugins: []
+  plugins: [],
+  optimization: {
+    minimize: false
+  }
 };
 
 const browserConfig = {
