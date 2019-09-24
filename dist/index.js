@@ -98,13 +98,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pages", function() { return pages; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagesI", function() { return pagesI; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurr", function() { return pageCurr; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrev", function() { return pagePrev; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNext", function() { return pageNext; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeek", function() { return pageSeek; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurrM", function() { return pageCurrM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurrRaw", function() { return pageCurrRaw; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurrRawM", function() { return pageCurrRawM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrev", function() { return pagePrev; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrevM", function() { return pagePrevM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrevRaw", function() { return pagePrevRaw; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrevRawM", function() { return pagePrevRawM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNext", function() { return pageNext; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextM", function() { return pageNextM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextRaw", function() { return pageNextRaw; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextRawM", function() { return pageNextRawM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeek", function() { return pageSeek; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeekM", function() { return pageSeekM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeekRaw", function() { return pageSeekRaw; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeekRawM", function() { return pageSeekRawM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageJump", function() { return pageJump; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageJumpM", function() { return pageJumpM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageJumpRaw", function() { return pageJumpRaw; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageJumpRawM", function() { return pageJumpRawM; });
 /**
  * Offset pagination
  *
@@ -157,12 +169,39 @@ function pageCurr(page, limit) {
     return { seek: seekNew, limit: limitNew };
 }
 ;
+function pageCurrM(page, action, limit) {
+    const patch = pageCurr(page, limit);
+    return processAction(action, patch);
+}
+function pageCurrRaw(page, limit) {
+    const limitNew = (limit != null) ? limit : page.limit;
+    const seekNew = page.seek;
+    return { seek: seekNew, limit: limitNew };
+}
+;
+function pageCurrRawM(page, action, limit) {
+    const patch = pageCurrRaw(page, limit);
+    return processAction(action, patch);
+}
 function pagePrev(page, limit) {
     const limitNew = (limit != null) ? limit : page.limit;
     let indexNew = pageIndex(page.seek, limitNew);
     indexNew = Math.max(indexNew - 1, 0);
     const seekNew = indexNew * limitNew;
     return { seek: seekNew, limit: limitNew };
+}
+function pagePrevM(page, action, limit) {
+    const patch = pagePrev(page, limit);
+    return processAction(action, patch);
+}
+function pagePrevRaw(page, limit) {
+    const limitNew = (limit != null) ? limit : page.limit;
+    const seekNew = page.seek - limitNew;
+    return { seek: seekNew, limit: limitNew };
+}
+function pagePrevRawM(page, action, limit) {
+    const patch = pagePrevRaw(page, limit);
+    return processAction(action, patch);
 }
 function pageNext(page, limit) {
     const limitNew = (limit != null) ? limit : page.limit;
@@ -171,6 +210,19 @@ function pageNext(page, limit) {
     const seekNew = indexNew * limitNew;
     return { seek: seekNew, limit: limitNew };
 }
+function pageNextM(page, action, limit) {
+    const patch = pageNext(page, limit);
+    return processAction(action, patch);
+}
+function pageNextRaw(page, limit) {
+    const limitNew = (limit != null) ? limit : page.limit;
+    const seekNew = page.seek + limitNew;
+    return { seek: seekNew, limit: limitNew };
+}
+function pageNextRawM(page, action, limit) {
+    const patch = pageNextRaw(page, limit);
+    return processAction(action, patch);
+}
 function pageSeek(page, seek, limit) {
     const limitNew = (limit != null) ? limit : page.limit;
     let indexNew = pageIndex(seek, limitNew);
@@ -178,31 +230,47 @@ function pageSeek(page, seek, limit) {
     const seekNew = indexNew * limitNew;
     return { seek: seekNew, limit: limitNew };
 }
-function pageCurrM(page, action, limit) {
-    const patch = pageCurr(page, limit);
-    return processAction(action, patch);
-}
-function pagePrevM(page, action, limit) {
-    const patch = pageCurr(page, limit);
-    return processAction(action, patch);
-}
-function pageNextM(page, action, limit) {
-    const patch = pageCurr(page, limit);
-    return processAction(action, patch);
-}
 function pageSeekM(page, action, seek, limit) {
-    const patch = pageCurr(page, limit);
+    const patch = pageSeek(page, seek, limit);
+    return processAction(action, patch);
+}
+function pageSeekRaw(page, seek, limit) {
+    const limitNew = (limit != null) ? limit : page.limit;
+    return { seek: seek, limit: limitNew };
+}
+function pageSeekRawM(page, action, seek, limit) {
+    const patch = pageSeekRaw(page, seek, limit);
+    return processAction(action, patch);
+}
+function pageJump(page, index, limit) {
+    const limitNew = (limit != null) ? limit : page.limit;
+    let indexNew = Math.max(index, 0);
+    const seekNew = indexNew * limitNew;
+    return { seek: seekNew, limit: limitNew };
+}
+function pageJumpM(page, action, index, limit) {
+    const patch = pageJump(page, index, limit);
+    return processAction(action, patch);
+}
+function pageJumpRaw(page, index, limit) {
+    const limitNew = (limit != null) ? limit : page.limit;
+    let indexNew = Math.max(index, 0);
+    const seekNew = indexNew * page.limit;
+    return { seek: seekNew, limit: limitNew };
+}
+function pageJumpRawM(page, action, index, limit) {
+    const patch = pageJumpRaw(page, index, limit);
     return processAction(action, patch);
 }
 function processAction(action, patch) {
     const result = action(patch.seek, patch.limit);
     if (result instanceof Promise) {
         return result.then((result_) => {
-            return Object.assign(Object.assign({}, patch), result_);
+            return Object.assign(Object.assign({}, patch), { total: result_.total, count: result_.count, items: result_.items });
         });
     }
     else {
-        return Object.assign(Object.assign({}, patch), result);
+        return Object.assign(Object.assign({}, patch), { total: result.total, count: result.count, items: result.items });
     }
 }
 
@@ -315,10 +383,10 @@ function processAction(action, patch) {
         result = action(patch.order, patch.seek, patch.limit);
     }
     if (result instanceof Promise) {
-        return result.then((result_) => (Object.assign(Object.assign({}, patch), result_)));
+        return result.then((result_) => (Object.assign(Object.assign({}, patch), { count: result_.count, seekFirst: result_.seekFirst, seekLast: result_.seekLast, items: result_.items })));
     }
     else {
-        return Object.assign(Object.assign({}, patch), result);
+        return Object.assign(Object.assign({}, patch), { count: result.count, seekFirst: result.seekFirst, seekLast: result.seekLast, items: result.items });
     }
 }
 

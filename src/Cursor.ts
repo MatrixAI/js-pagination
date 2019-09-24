@@ -194,9 +194,21 @@ function processAction (action: any, patch: any): any {
     result = action(patch.order, patch.seek, patch.limit);
   }
   if (result instanceof Promise) {
-    return result.then((result_) => ({...patch, ...result_}));
+    return result.then((result_) => ({
+      ...patch,
+      count: result_.count,
+      seekFirst: result_.seekFirst,
+      seekLast: result_.seekLast,
+      items: result_.items
+    }));
   } else {
-    return {...patch, ...result};
+    return {
+      ...patch,
+      count: result.count,
+      seekFirst: result.seekFirst,
+      seekLast: result.seekLast,
+      items: result.items
+    };
   }
 }
 

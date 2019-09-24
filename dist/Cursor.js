@@ -193,10 +193,10 @@ function processAction(action, patch) {
         result = action(patch.order, patch.seek, patch.limit);
     }
     if (result instanceof Promise) {
-        return result.then((result_) => (Object.assign(Object.assign({}, patch), result_)));
+        return result.then((result_) => (Object.assign(Object.assign({}, patch), { count: result_.count, seekFirst: result_.seekFirst, seekLast: result_.seekLast, items: result_.items })));
     }
     else {
-        return Object.assign(Object.assign({}, patch), result);
+        return Object.assign(Object.assign({}, patch), { count: result.count, seekFirst: result.seekFirst, seekLast: result.seekLast, items: result.items });
     }
 }
 
