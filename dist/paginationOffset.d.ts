@@ -30,17 +30,17 @@ declare type Pagination<I extends Iterable<any>> = Readonly<{
     count: number;
     items: I;
 }>;
-declare type Patch = {
+declare type Patch = Readonly<{
     seek: number;
     limit: number;
-};
+}>;
 declare type ActionAsync<I> = (seek: number, limit: number) => Promise<ActionResult<I>>;
 declare type ActionSync<I> = (seek: number, limit: number) => ActionResult<I>;
-declare type ActionResult<I> = {
+declare type ActionResult<I> = Readonly<{
     total: number;
     count: number;
     items: I;
-};
+}>;
 declare function pageIndex(seek: number, limit: number): number;
 declare function pageCount(total: number, limit: number): number;
 declare function pageFirst(index: number): boolean;

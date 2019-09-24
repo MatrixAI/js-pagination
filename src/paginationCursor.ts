@@ -46,16 +46,16 @@ type Pagination<I extends Iterable<[S, any]>, S> = Readonly<{
   items: I;
 }>;
 
-type PatchSeekLimit<S> = {
+type PatchSeekLimit<S> = Readonly<{
   order: boolean,
   seek: S,
   limit: number
-};
-type PatchSeekAfterBefore<S> = {
+}>;
+type PatchSeekAfterBefore<S> = Readonly<{
   order: null,
   seekAfter: S,
   seekBefore: S
-};
+}>;
 
 type ActionAsync<I, S> = {
   (order: boolean, seek: S, limit: number): Promise<ActionResult<I, S>>
@@ -65,12 +65,12 @@ type ActionSync<I, S> = {
   (order: boolean, seek: S, limit: number): ActionResult<I, S>
   (order: null, seekAfter: S, seekBefore: S): ActionResult<I, S>
 };
-type ActionResult<I, S> = {
+type ActionResult<I, S> = Readonly<{
   count: number,
   seekFirst: S,
   seekLast: S,
   items: I
-};
+}>;
 
 function pageCurr<I extends Iterable<[S, any]>, S> (
   page: Pagination<I, S>,

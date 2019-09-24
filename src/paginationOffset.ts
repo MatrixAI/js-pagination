@@ -32,18 +32,18 @@ type Pagination<I extends Iterable<any>> = Readonly<{
   items: I;
 }>;
 
-type Patch = {
+type Patch = Readonly<{
   seek: number;
   limit: number;
-};
+}>;
 
 type ActionAsync<I> = (seek: number, limit: number) => Promise<ActionResult<I>>;
 type ActionSync<I> = (seek: number, limit: number) => ActionResult<I>;
-type ActionResult<I> = {
+type ActionResult<I> = Readonly<{
   total: number,
   count: number,
   items: I
-};
+}>;
 
 function pageIndex (seek: number, limit: number): number {
   return Math.floor(seek / limit);
