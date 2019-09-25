@@ -1,34 +1,12 @@
 /**
  * Offset pagination
- *
- * @remarks
- *
- * Offset pagination relies on a seek and limit number.
- *
- * Consider the resource we are paginating is:
- *
- * ```ts
- * ['A', 'B', 'C', 'D']
- * ```
- *
- * The seek index starts at 0.
- * The limit is entire length of the returned pagination view.
- * A seek and limit of `[0, 2]` would return `['A', 'B']`.
- *
- * The page numbers start at 1. So by using `[0, 2]`
- * we get page numbers of `[1, 2]`. We still refer to these numbers
- * with the page index.
- *
- * Note that the total represents the total number of items
- * when the pagination was fetched. The true total of items may have
- * changed on the server side since fetching a pagination.
  */
 
 type Pagination<I extends Iterable<any>> = Readonly<{
   seek: number;
   limit: number;
   total: number;
-  count: number;
+  length: number;
   items: I;
 }>;
 
@@ -41,7 +19,7 @@ type ActionAsync<I> = (seek: number, limit: number) => Promise<ActionResult<I>>;
 type ActionSync<I> = (seek: number, limit: number) => ActionResult<I>;
 type ActionResult<I> = Readonly<{
   total: number,
-  count: number,
+  length: number,
   items: I
 }>;
 
@@ -61,12 +39,12 @@ function pageLast (index: number, count: number): boolean {
   return index === (count - 1);
 }
 
-function pages (pageCount: number): Array<number> {
-  return Array.from({length: pageCount}, (_, i) => i + 1);
+function pages (count: number): Array<number> {
+  return Array.from({length: count}, (_, i) => i + 1);
 }
 
-function* pagesI (pageCount: number): IterableIterator<number> {
-  for (let i = 1; i <= pageCount; ++i) {
+function* pagesI (count: number): IterableIterator<number> {
+  for (let i = 1; i <= count; ++i) {
       yield i;
   }
 }
@@ -346,7 +324,7 @@ function processAction (action: any, patch: any): any {
       return {
         ...patch,
         total: result_.total,
-        count: result_.count,
+        length: result_.length,
         items: result_.items
       }
     });
@@ -354,7 +332,7 @@ function processAction (action: any, patch: any): any {
     return {
       ...patch,
       total: result.total,
-      count: result.count,
+      length: result.length,
       items: result.items
     };
   }

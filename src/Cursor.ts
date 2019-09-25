@@ -1,30 +1,12 @@
 /**
  * Cursor pagination
- *
- * @remarks
- *
- * Cursor pagination relies on unique orderable seek key.
- *
- * Consider the resource we are paginating is:
- *
- * ```ts
- * ['A', 'B', 'C', 'D']
- * ```
- *
- * Assume that the seek key is `[0, 1, 2, 3]`.
- * Using `order = true`, `seek = 0` and `limit = 2`, you would get `['B', 'C']`.
- * Using `order = false`, `seek = 2` and `limit = 2`, you would get `['A', 'B']`.
- * Using `order = null`, `seekAfter = 1`, `seekBefore = 3`, you would get `['C']`.
- *
- * Cursor pagination does not allow random access of the pages.
- * You can however randomly access if you know the seek key you want.
  */
 
 type Pagination<I extends Iterable<[S, any]>, S> = Readonly<{
   order: true;
   seek: S;
   limit: number;
-  count: number;
+  length: number;
   seekFirst: S;
   seekLast: S;
   items: I;
@@ -32,7 +14,7 @@ type Pagination<I extends Iterable<[S, any]>, S> = Readonly<{
   order: false;
   seek: S;
   limit: number;
-  count: number;
+  length: number;
   seekFirst: S;
   seekLast: S;
   items: I;
@@ -42,7 +24,7 @@ type Pagination<I extends Iterable<[S, any]>, S> = Readonly<{
   seekBefore: S;
   seekFirst: S;
   seekLast: S;
-  count: number;
+  length: number;
   items: I;
 }>;
 
@@ -66,7 +48,7 @@ type ActionSync<I, S> = {
   (order: null, seekAfter: S, seekBefore: S): ActionResult<I, S>
 };
 type ActionResult<I, S> = Readonly<{
-  count: number,
+  length: number,
   seekFirst: S,
   seekLast: S,
   items: I
@@ -105,7 +87,7 @@ function pagePrev<I extends Iterable<[S, any]>, S> (
 ): PatchSeekLimit<S> {
   let limitNew;
   if (page.order === null) {
-    limitNew = (limit != null) ? limit : page.count;
+    limitNew = (limit != null) ? limit : page.length;
   } else {
     limitNew = (limit != null) ? limit : page.limit;
   }
@@ -122,7 +104,7 @@ function pageNext<I extends Iterable<[S, any]>, S> (
 ): PatchSeekLimit<S> {
   let limitNew;
   if (page.order === null) {
-    limitNew = (limit != null) ? limit : page.count;
+    limitNew = (limit != null) ? limit : page.length;
   } else {
     limitNew = (limit != null) ? limit : page.limit;
   }
@@ -196,7 +178,7 @@ function processAction (action: any, patch: any): any {
   if (result instanceof Promise) {
     return result.then((result_) => ({
       ...patch,
-      count: result_.count,
+      length: result_.length,
       seekFirst: result_.seekFirst,
       seekLast: result_.seekLast,
       items: result_.items
@@ -204,7 +186,7 @@ function processAction (action: any, patch: any): any {
   } else {
     return {
       ...patch,
-      count: result.count,
+      length: result.length,
       seekFirst: result.seekFirst,
       seekLast: result.seekLast,
       items: result.items

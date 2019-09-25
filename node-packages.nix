@@ -7,7 +7,7 @@ let
   args = {
     name = "_at_matrixai_slash_pagination";
     packageName = "@matrixai/pagination";
-    version = "0.0.1";
+    version = "0.0.7";
     src = ./.;
     buildInputs = globalBuildInputs;
     meta = {

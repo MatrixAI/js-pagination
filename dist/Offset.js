@@ -119,28 +119,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageJumpRawM", function() { return pageJumpRawM; });
 /**
  * Offset pagination
- *
- * @remarks
- *
- * Offset pagination relies on a seek and limit number.
- *
- * Consider the resource we are paginating is:
- *
- * ```ts
- * ['A', 'B', 'C', 'D']
- * ```
- *
- * The seek index starts at 0.
- * The limit is entire length of the returned pagination view.
- * A seek and limit of `[0, 2]` would return `['A', 'B']`.
- *
- * The page numbers start at 1. So by using `[0, 2]`
- * we get page numbers of `[1, 2]`. We still refer to these numbers
- * with the page index.
- *
- * Note that the total represents the total number of items
- * when the pagination was fetched. The true total of items may have
- * changed on the server side since fetching a pagination.
  */
 function pageIndex(seek, limit) {
     return Math.floor(seek / limit);
@@ -154,11 +132,11 @@ function pageFirst(index) {
 function pageLast(index, count) {
     return index === (count - 1);
 }
-function pages(pageCount) {
-    return Array.from({ length: pageCount }, (_, i) => i + 1);
+function pages(count) {
+    return Array.from({ length: count }, (_, i) => i + 1);
 }
-function* pagesI(pageCount) {
-    for (let i = 1; i <= pageCount; ++i) {
+function* pagesI(count) {
+    for (let i = 1; i <= count; ++i) {
         yield i;
     }
 }
@@ -266,11 +244,11 @@ function processAction(action, patch) {
     const result = action(patch.seek, patch.limit);
     if (result instanceof Promise) {
         return result.then((result_) => {
-            return Object.assign(Object.assign({}, patch), { total: result_.total, count: result_.count, items: result_.items });
+            return Object.assign(Object.assign({}, patch), { total: result_.total, length: result_.length, items: result_.items });
         });
     }
     else {
-        return Object.assign(Object.assign({}, patch), { total: result.total, count: result.count, items: result.items });
+        return Object.assign(Object.assign({}, patch), { total: result.total, length: result.length, items: result.items });
     }
 }
 

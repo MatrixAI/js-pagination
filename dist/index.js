@@ -119,28 +119,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageJumpRawM", function() { return pageJumpRawM; });
 /**
  * Offset pagination
- *
- * @remarks
- *
- * Offset pagination relies on a seek and limit number.
- *
- * Consider the resource we are paginating is:
- *
- * ```ts
- * ['A', 'B', 'C', 'D']
- * ```
- *
- * The seek index starts at 0.
- * The limit is entire length of the returned pagination view.
- * A seek and limit of `[0, 2]` would return `['A', 'B']`.
- *
- * The page numbers start at 1. So by using `[0, 2]`
- * we get page numbers of `[1, 2]`. We still refer to these numbers
- * with the page index.
- *
- * Note that the total represents the total number of items
- * when the pagination was fetched. The true total of items may have
- * changed on the server side since fetching a pagination.
  */
 function pageIndex(seek, limit) {
     return Math.floor(seek / limit);
@@ -154,11 +132,11 @@ function pageFirst(index) {
 function pageLast(index, count) {
     return index === (count - 1);
 }
-function pages(pageCount) {
-    return Array.from({ length: pageCount }, (_, i) => i + 1);
+function pages(count) {
+    return Array.from({ length: count }, (_, i) => i + 1);
 }
-function* pagesI(pageCount) {
-    for (let i = 1; i <= pageCount; ++i) {
+function* pagesI(count) {
+    for (let i = 1; i <= count; ++i) {
         yield i;
     }
 }
@@ -266,11 +244,11 @@ function processAction(action, patch) {
     const result = action(patch.seek, patch.limit);
     if (result instanceof Promise) {
         return result.then((result_) => {
-            return Object.assign(Object.assign({}, patch), { total: result_.total, count: result_.count, items: result_.items });
+            return Object.assign(Object.assign({}, patch), { total: result_.total, length: result_.length, items: result_.items });
         });
     }
     else {
-        return Object.assign(Object.assign({}, patch), { total: result.total, count: result.count, items: result.items });
+        return Object.assign(Object.assign({}, patch), { total: result.total, length: result.length, items: result.items });
     }
 }
 
@@ -290,24 +268,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextM", function() { return pageNextM; });
 /**
  * Cursor pagination
- *
- * @remarks
- *
- * Cursor pagination relies on unique orderable seek key.
- *
- * Consider the resource we are paginating is:
- *
- * ```ts
- * ['A', 'B', 'C', 'D']
- * ```
- *
- * Assume that the seek key is `[0, 1, 2, 3]`.
- * Using `order = true`, `seek = 0` and `limit = 2`, you would get `['B', 'C']`.
- * Using `order = false`, `seek = 2` and `limit = 2`, you would get `['A', 'B']`.
- * Using `order = null`, `seekAfter = 1`, `seekBefore = 3`, you would get `['C']`.
- *
- * Cursor pagination does not allow random access of the pages.
- * You can however randomly access if you know the seek key you want.
  */
 function pageCurr(page, limit) {
     if (page.order === true) {
@@ -337,7 +297,7 @@ function pageCurr(page, limit) {
 function pagePrev(page, limit) {
     let limitNew;
     if (page.order === null) {
-        limitNew = (limit != null) ? limit : page.count;
+        limitNew = (limit != null) ? limit : page.length;
     }
     else {
         limitNew = (limit != null) ? limit : page.limit;
@@ -351,7 +311,7 @@ function pagePrev(page, limit) {
 function pageNext(page, limit) {
     let limitNew;
     if (page.order === null) {
-        limitNew = (limit != null) ? limit : page.count;
+        limitNew = (limit != null) ? limit : page.length;
     }
     else {
         limitNew = (limit != null) ? limit : page.limit;
@@ -383,10 +343,10 @@ function processAction(action, patch) {
         result = action(patch.order, patch.seek, patch.limit);
     }
     if (result instanceof Promise) {
-        return result.then((result_) => (Object.assign(Object.assign({}, patch), { count: result_.count, seekFirst: result_.seekFirst, seekLast: result_.seekLast, items: result_.items })));
+        return result.then((result_) => (Object.assign(Object.assign({}, patch), { length: result_.length, seekFirst: result_.seekFirst, seekLast: result_.seekLast, items: result_.items })));
     }
     else {
-        return Object.assign(Object.assign({}, patch), { count: result.count, seekFirst: result.seekFirst, seekLast: result.seekLast, items: result.items });
+        return Object.assign(Object.assign({}, patch), { length: result.length, seekFirst: result.seekFirst, seekLast: result.seekLast, items: result.items });
     }
 }
 
