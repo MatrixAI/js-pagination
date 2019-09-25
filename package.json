@@ -2,6 +2,13 @@
   "name": "@matrixai/pagination",
   "version": "0.0.7",
   "description": "Offset-based and cursor-based pagination utilities",
+  "keywords": [
+    "pagination",
+    "offset",
+    "cursor"
+  ],
+  "author": "Roger Qiu <roger.qiu@matrix.ai>",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/MatrixAI/js-pagination.git"
@@ -20,7 +27,5 @@
     "typescript": "^3.6.3",
     "webpack": "^4.40.2",
     "webpack-cli": "^3.3.9"
-  },
-  "author": "Roger Qiu <roger.qiu@matrix.ai>",
-  "license": "Apache-2.0"
+  }
 }
