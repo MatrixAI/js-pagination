@@ -93,11 +93,11 @@ module.exports =
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurr", function() { return pageCurr; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurrA", function() { return pageCurrA; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrev", function() { return pagePrev; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrevA", function() { return pagePrevA; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNext", function() { return pageNext; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurrM", function() { return pageCurrM; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrevM", function() { return pagePrevM; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextM", function() { return pageNextM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextA", function() { return pageNextA; });
 /**
  * Cursor pagination
  */
@@ -126,6 +126,10 @@ function pageCurr(page, limit) {
         };
     }
 }
+function pageCurrA(page, action, limit) {
+    const patch = pageCurr(page, limit);
+    return processAction(action, patch);
+}
 function pagePrev(page, limit) {
     let limitNew;
     if (page.order === null) {
@@ -139,6 +143,10 @@ function pagePrev(page, limit) {
         seek: page.seekFirst,
         limit: limitNew
     };
+}
+function pagePrevA(page, action, limit) {
+    const patch = pagePrev(page, limit);
+    return processAction(action, patch);
 }
 function pageNext(page, limit) {
     let limitNew;
@@ -154,15 +162,7 @@ function pageNext(page, limit) {
         limit: limitNew
     };
 }
-function pageCurrM(page, action, limit) {
-    const patch = pageCurr(page, limit);
-    return processAction(action, patch);
-}
-function pagePrevM(page, action, limit) {
-    const patch = pagePrev(page, limit);
-    return processAction(action, patch);
-}
-function pageNextM(page, action, limit) {
+function pageNextA(page, action, limit) {
     const patch = pageNext(page, limit);
     return processAction(action, patch);
 }

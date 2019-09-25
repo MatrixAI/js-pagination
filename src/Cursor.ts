@@ -81,6 +81,21 @@ function pageCurr<I extends Iterable<[S, any]>, S> (
   }
 }
 
+function pageCurrA<I extends Iterable<[S, any]>, S> (
+  page: Pagination<I, S>,
+  action: ActionAsync<I, S>,
+  limit?: number
+): Promise<Pagination<I, S>>;
+function pageCurrA<I extends Iterable<[S, any]>, S> (
+  page: Pagination<I, S>,
+  action: ActionSync<I, S>,
+  limit?: number
+): Pagination<I, S>;
+function pageCurrA (page: any, action: any, limit?: any): any {
+  const patch = pageCurr(page, limit);
+  return processAction(action, patch);
+}
+
 function pagePrev<I extends Iterable<[S, any]>, S> (
   page: Pagination<I, S>,
   limit?: number
@@ -96,6 +111,21 @@ function pagePrev<I extends Iterable<[S, any]>, S> (
     seek: page.seekFirst,
     limit: limitNew
   };
+}
+
+function pagePrevA<I extends Iterable<[S, any]>, S> (
+  page: Pagination<I, S>,
+  action: ActionAsync<I, S>,
+  limit?: number
+): Promise<Pagination<I, S>>;
+function pagePrevA<I extends Iterable<[S, any]>, S> (
+  page: Pagination<I, S>,
+  action: ActionSync<I, S>,
+  limit?: number
+): Pagination<I, S>;
+function pagePrevA (page: any, action: any, limit?: any): any {
+  const patch = pagePrev(page, limit);
+  return processAction(action, patch);
 }
 
 function pageNext<I extends Iterable<[S, any]>, S> (
@@ -115,47 +145,17 @@ function pageNext<I extends Iterable<[S, any]>, S> (
   };
 }
 
-function pageCurrM<I extends Iterable<[S, any]>, S> (
+function pageNextA<I extends Iterable<[S, any]>, S> (
   page: Pagination<I, S>,
   action: ActionAsync<I, S>,
   limit?: number
 ): Promise<Pagination<I, S>>;
-function pageCurrM<I extends Iterable<[S, any]>, S> (
+function pageNextA<I extends Iterable<[S, any]>, S> (
   page: Pagination<I, S>,
   action: ActionSync<I, S>,
   limit?: number
 ): Pagination<I, S>;
-function pageCurrM (page: any, action: any, limit?: any): any {
-  const patch = pageCurr(page, limit);
-  return processAction(action, patch);
-}
-
-function pagePrevM<I extends Iterable<[S, any]>, S> (
-  page: Pagination<I, S>,
-  action: ActionAsync<I, S>,
-  limit?: number
-): Promise<Pagination<I, S>>;
-function pagePrevM<I extends Iterable<[S, any]>, S> (
-  page: Pagination<I, S>,
-  action: ActionSync<I, S>,
-  limit?: number
-): Pagination<I, S>;
-function pagePrevM (page: any, action: any, limit?: any): any {
-  const patch = pagePrev(page, limit);
-  return processAction(action, patch);
-}
-
-function pageNextM<I extends Iterable<[S, any]>, S> (
-  page: Pagination<I, S>,
-  action: ActionAsync<I, S>,
-  limit?: number
-): Promise<Pagination<I, S>>;
-function pageNextM<I extends Iterable<[S, any]>, S> (
-  page: Pagination<I, S>,
-  action: ActionSync<I, S>,
-  limit?: number
-): Pagination<I, S>;
-function pageNextM (page: any, action: any, limit?: any): any {
+function pageNextA (page: any, action: any, limit?: any): any {
   const patch = pageNext(page, limit);
   return processAction(action, patch);
 }
@@ -202,9 +202,9 @@ export {
   ActionSync,
   ActionResult,
   pageCurr,
+  pageCurrA,
   pagePrev,
+  pagePrevA,
   pageNext,
-  pageCurrM,
-  pagePrevM,
-  pageNextM
+  pageNextA
 };

@@ -59,17 +59,17 @@ function pageCurr<I extends Iterable<any>> (
   return {seek: seekNew, limit: limitNew};
 };
 
-function pageCurrM<I extends Iterable<any>> (
+function pageCurrA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionAsync<I>,
   limit?: number
 ): Promise<Pagination<I>>;
-function pageCurrM<I extends Iterable<any>> (
+function pageCurrA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionSync<I>,
   limit?: number
 ): Pagination<I>;
-function pageCurrM (page: any, action: any, limit?: any): any {
+function pageCurrA (page: any, action: any, limit?: any): any {
   const patch = pageCurr(page, limit);
   return processAction(action, patch);
 }
@@ -83,17 +83,17 @@ function pageCurrRaw<I extends Iterable<any>> (
   return {seek: seekNew, limit: limitNew};
 };
 
-function pageCurrRawM<I extends Iterable<any>> (
+function pageCurrRawA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionAsync<I>,
   limit?: number
 ): Promise<Pagination<I>>;
-function pageCurrRawM<I extends Iterable<any>> (
+function pageCurrRawA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionSync<I>,
   limit?: number
 ): Pagination<I>;
-function pageCurrRawM (page: any, action: any, limit?: any): any {
+function pageCurrRawA (page: any, action: any, limit?: any): any {
   const patch = pageCurrRaw(page, limit);
   return processAction(action, patch);
 }
@@ -109,17 +109,17 @@ function pagePrev<I extends Iterable<any>> (
   return {seek: seekNew, limit: limitNew};
 }
 
-function pagePrevM<I extends Iterable<any>> (
+function pagePrevA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionAsync<I>,
   limit?: number
 ): Promise<Pagination<I>>;
-function pagePrevM<I extends Iterable<any>> (
+function pagePrevA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionSync<I>,
   limit?: number
 ): Pagination<I>;
-function pagePrevM (page: any, action: any, limit?: any): any {
+function pagePrevA (page: any, action: any, limit?: any): any {
   const patch = pagePrev(page, limit);
   return processAction(action, patch);
 }
@@ -133,17 +133,17 @@ function pagePrevRaw<I extends Iterable<any>> (
   return {seek: seekNew, limit: limitNew};
 }
 
-function pagePrevRawM<I extends Iterable<any>> (
+function pagePrevRawA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionAsync<I>,
   limit?: number
 ): Promise<Pagination<I>>;
-function pagePrevRawM<I extends Iterable<any>> (
+function pagePrevRawA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionSync<I>,
   limit?: number
 ): Pagination<I>;
-function pagePrevRawM (page: any, action: any, limit?: any): any {
+function pagePrevRawA (page: any, action: any, limit?: any): any {
   const patch = pagePrevRaw(page, limit);
   return processAction(action, patch);
 }
@@ -159,17 +159,17 @@ function pageNext<I extends Iterable<any>> (
   return {seek: seekNew, limit: limitNew};
 }
 
-function pageNextM<I extends Iterable<any>> (
+function pageNextA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionAsync<I>,
   limit?: number
 ): Promise<Pagination<I>>;
-function pageNextM<I extends Iterable<any>> (
+function pageNextA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionSync<I>,
   limit?: number
 ): Pagination<I>;
-function pageNextM (page: any, action: any, limit?: any): any {
+function pageNextA (page: any, action: any, limit?: any): any {
   const patch = pageNext(page, limit);
   return processAction(action, patch);
 }
@@ -183,17 +183,17 @@ function pageNextRaw<I extends Iterable<any>> (
   return {seek: seekNew, limit: limitNew};
 }
 
-function pageNextRawM<I extends Iterable<any>> (
+function pageNextRawA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionAsync<I>,
   limit?: number
 ): Promise<Pagination<I>>;
-function pageNextRawM<I extends Iterable<any>> (
+function pageNextRawA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionSync<I>,
   limit?: number
 ): Pagination<I>;
-function pageNextRawM (page: any, action: any, limit?: any): any {
+function pageNextRawA (page: any, action: any, limit?: any): any {
   const patch = pageNextRaw(page, limit);
   return processAction(action, patch);
 }
@@ -210,19 +210,19 @@ function pageSeek<I extends Iterable<any>> (
   return {seek: seekNew, limit: limitNew};
 }
 
-function pageSeekM<I extends Iterable<any>> (
+function pageSeekA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionAsync<I>,
   seek: number,
   limit?: number
 ): Promise<Pagination<I>>;
-function pageSeekM<I extends Iterable<any>> (
+function pageSeekA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionSync<I>,
   seek: number,
   limit?: number
 ): Pagination<I>;
-function pageSeekM (page: any, action: any, seek: any, limit?: any): any {
+function pageSeekA (page: any, action: any, seek: any, limit?: any): any {
   const patch = pageSeek(page, seek, limit);
   return processAction(action, patch);
 }
@@ -236,19 +236,19 @@ function pageSeekRaw<I extends Iterable<any>> (
   return {seek: seek, limit: limitNew};
 }
 
-function pageSeekRawM<I extends Iterable<any>> (
+function pageSeekRawA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionAsync<I>,
   seek: number,
   limit?: number
 ): Promise<Pagination<I>>;
-function pageSeekRawM<I extends Iterable<any>> (
+function pageSeekRawA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionSync<I>,
   seek: number,
   limit?: number
 ): Pagination<I>;
-function pageSeekRawM (page: any, action: any, seek: any, limit?: any): any {
+function pageSeekRawA (page: any, action: any, seek: any, limit?: any): any {
   const patch = pageSeekRaw(page, seek, limit);
   return processAction(action, patch);
 }
@@ -264,19 +264,19 @@ function pageJump<I extends Iterable<any>> (
   return {seek: seekNew, limit: limitNew};
 }
 
-function pageJumpM<I extends Iterable<any>> (
+function pageJumpA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionAsync<I>,
   seek: number,
   limit?: number
 ): Promise<Pagination<I>>;
-function pageJumpM<I extends Iterable<any>> (
+function pageJumpA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionSync<I>,
   seek: number,
   limit?: number
 ): Pagination<I>;
-function pageJumpM (page: any, action: any, index: any, limit?: any): any {
+function pageJumpA (page: any, action: any, index: any, limit?: any): any {
   const patch = pageJump(page, index, limit);
   return processAction(action, patch);
 }
@@ -292,19 +292,19 @@ function pageJumpRaw<I extends Iterable<any>> (
   return {seek: seekNew, limit: limitNew};
 }
 
-function pageJumpRawM<I extends Iterable<any>> (
+function pageJumpRawA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionAsync<I>,
   seek: number,
   limit?: number
 ): Promise<Pagination<I>>;
-function pageJumpRawM<I extends Iterable<any>> (
+function pageJumpRawA<I extends Iterable<any>> (
   page: Pagination<I>,
   action: ActionSync<I>,
   seek: number,
   limit?: number
 ): Pagination<I>;
-function pageJumpRawM (page: any, action: any, index: any, limit?: any): any {
+function pageJumpRawA (page: any, action: any, index: any, limit?: any): any {
   const patch = pageJumpRaw(page, index, limit);
   return processAction(action, patch);
 }
@@ -351,23 +351,23 @@ export {
   pages,
   pagesI,
   pageCurr,
-  pageCurrM,
+  pageCurrA,
   pageCurrRaw,
-  pageCurrRawM,
+  pageCurrRawA,
   pagePrev,
-  pagePrevM,
+  pagePrevA,
   pagePrevRaw,
-  pagePrevRawM,
+  pagePrevRawA,
   pageNext,
-  pageNextM,
+  pageNextA,
   pageNextRaw,
-  pageNextRawM,
+  pageNextRawA,
   pageSeek,
-  pageSeekM,
+  pageSeekA,
   pageSeekRaw,
-  pageSeekRawM,
+  pageSeekRawA,
   pageJump,
-  pageJumpM,
+  pageJumpA,
   pageJumpRaw,
-  pageJumpRawM
+  pageJumpRawA
 };

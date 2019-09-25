@@ -98,25 +98,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pages", function() { return pages; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagesI", function() { return pagesI; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurr", function() { return pageCurr; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurrM", function() { return pageCurrM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurrA", function() { return pageCurrA; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurrRaw", function() { return pageCurrRaw; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurrRawM", function() { return pageCurrRawM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageCurrRawA", function() { return pageCurrRawA; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrev", function() { return pagePrev; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrevM", function() { return pagePrevM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrevA", function() { return pagePrevA; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrevRaw", function() { return pagePrevRaw; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrevRawM", function() { return pagePrevRawM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pagePrevRawA", function() { return pagePrevRawA; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNext", function() { return pageNext; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextM", function() { return pageNextM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextA", function() { return pageNextA; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextRaw", function() { return pageNextRaw; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextRawM", function() { return pageNextRawM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageNextRawA", function() { return pageNextRawA; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeek", function() { return pageSeek; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeekM", function() { return pageSeekM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeekA", function() { return pageSeekA; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeekRaw", function() { return pageSeekRaw; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeekRawM", function() { return pageSeekRawM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageSeekRawA", function() { return pageSeekRawA; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageJump", function() { return pageJump; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageJumpM", function() { return pageJumpM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageJumpA", function() { return pageJumpA; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageJumpRaw", function() { return pageJumpRaw; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageJumpRawM", function() { return pageJumpRawM; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pageJumpRawA", function() { return pageJumpRawA; });
 /**
  * Offset pagination
  */
@@ -147,7 +147,7 @@ function pageCurr(page, limit) {
     return { seek: seekNew, limit: limitNew };
 }
 ;
-function pageCurrM(page, action, limit) {
+function pageCurrA(page, action, limit) {
     const patch = pageCurr(page, limit);
     return processAction(action, patch);
 }
@@ -157,7 +157,7 @@ function pageCurrRaw(page, limit) {
     return { seek: seekNew, limit: limitNew };
 }
 ;
-function pageCurrRawM(page, action, limit) {
+function pageCurrRawA(page, action, limit) {
     const patch = pageCurrRaw(page, limit);
     return processAction(action, patch);
 }
@@ -168,7 +168,7 @@ function pagePrev(page, limit) {
     const seekNew = indexNew * limitNew;
     return { seek: seekNew, limit: limitNew };
 }
-function pagePrevM(page, action, limit) {
+function pagePrevA(page, action, limit) {
     const patch = pagePrev(page, limit);
     return processAction(action, patch);
 }
@@ -177,7 +177,7 @@ function pagePrevRaw(page, limit) {
     const seekNew = page.seek - limitNew;
     return { seek: seekNew, limit: limitNew };
 }
-function pagePrevRawM(page, action, limit) {
+function pagePrevRawA(page, action, limit) {
     const patch = pagePrevRaw(page, limit);
     return processAction(action, patch);
 }
@@ -188,7 +188,7 @@ function pageNext(page, limit) {
     const seekNew = indexNew * limitNew;
     return { seek: seekNew, limit: limitNew };
 }
-function pageNextM(page, action, limit) {
+function pageNextA(page, action, limit) {
     const patch = pageNext(page, limit);
     return processAction(action, patch);
 }
@@ -197,7 +197,7 @@ function pageNextRaw(page, limit) {
     const seekNew = page.seek + limitNew;
     return { seek: seekNew, limit: limitNew };
 }
-function pageNextRawM(page, action, limit) {
+function pageNextRawA(page, action, limit) {
     const patch = pageNextRaw(page, limit);
     return processAction(action, patch);
 }
@@ -208,7 +208,7 @@ function pageSeek(page, seek, limit) {
     const seekNew = indexNew * limitNew;
     return { seek: seekNew, limit: limitNew };
 }
-function pageSeekM(page, action, seek, limit) {
+function pageSeekA(page, action, seek, limit) {
     const patch = pageSeek(page, seek, limit);
     return processAction(action, patch);
 }
@@ -216,7 +216,7 @@ function pageSeekRaw(page, seek, limit) {
     const limitNew = (limit != null) ? limit : page.limit;
     return { seek: seek, limit: limitNew };
 }
-function pageSeekRawM(page, action, seek, limit) {
+function pageSeekRawA(page, action, seek, limit) {
     const patch = pageSeekRaw(page, seek, limit);
     return processAction(action, patch);
 }
@@ -226,7 +226,7 @@ function pageJump(page, index, limit) {
     const seekNew = indexNew * limitNew;
     return { seek: seekNew, limit: limitNew };
 }
-function pageJumpM(page, action, index, limit) {
+function pageJumpA(page, action, index, limit) {
     const patch = pageJump(page, index, limit);
     return processAction(action, patch);
 }
@@ -236,7 +236,7 @@ function pageJumpRaw(page, index, limit) {
     const seekNew = indexNew * page.limit;
     return { seek: seekNew, limit: limitNew };
 }
-function pageJumpRawM(page, action, index, limit) {
+function pageJumpRawA(page, action, index, limit) {
     const patch = pageJumpRaw(page, index, limit);
     return processAction(action, patch);
 }
