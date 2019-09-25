@@ -37,3 +37,12 @@ Assume that the seek key is `[0, 1, 2, 3]`:
 * Using `order = null`, `seekAfter = 1`, `seekBefore = 3`, you would get `['C']`.
 
 Cursor pagination does not allow random access of the pages. You can however randomly access if you know the seek key you want.
+
+## Development
+
+```sh
+type='patch'
+npm run build
+npm version $type
+npm publish
+```
