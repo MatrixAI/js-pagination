@@ -23,6 +23,10 @@ type ActionResult<I> = Readonly<{
   items: I
 }>;
 
+function range (start: number, end: number): Array<number> {
+  return Array.from({length: end - start}, (_, i) => i + start);
+}
+
 function pageIndex (seek: number, limit: number): number {
   return Math.floor(seek / limit);
 }
@@ -40,12 +44,54 @@ function pageLast (index: number, count: number): boolean {
 }
 
 function pages (count: number): Array<number> {
-  return Array.from({length: count}, (_, i) => i + 1);
+  return range(1, count + 1);
 }
 
 function* pagesI (count: number): IterableIterator<number> {
   for (let i = 1; i <= count; ++i) {
       yield i;
+  }
+}
+
+function pagesT (
+  count: number,
+  index: number,
+  countLeft: number,
+  countIndex: number,
+  countRight: number
+): (
+  [Array<number>] |
+  [Array<number>, Array<number>] |
+  [Array<number>, Array<number>, Array<number>]
+) {
+  const countSlots = countLeft + 1 + countIndex + 1 + countRight;
+  if (count <= countSlots) {
+    return [pages(count)];
+  }
+  const leftStart = 1;
+  const leftEnd = countLeft;
+  const indexStart = index - Math.floor(countIndex / 2) + 1;
+  const indexEnd = index + Math.floor(countIndex / 2) + 1;
+  const rightStart = count - countRight + 1;
+  const rightEnd = count;
+  if (indexStart <= leftEnd + 1) {
+    const countLeftNew = countSlots - countRight;
+    return [
+      range(leftStart, countLeftNew),
+      range(rightStart, rightEnd + 1)
+    ];
+  } else if (indexEnd >= rightStart - 1) {
+    const countRightNew = countSlots - countLeft - 2;
+    return [
+      range(leftStart, leftEnd + 1),
+      range(count - countRightNew, rightEnd + 1)
+    ];
+  } else {
+    return [
+      range(leftStart, leftEnd + 1),
+      range(indexStart, indexEnd + 1),
+      range(rightStart, rightEnd + 1)
+    ];
   }
 }
 
@@ -350,6 +396,7 @@ export {
   pageLast,
   pages,
   pagesI,
+  pagesT,
   pageCurr,
   pageCurrA,
   pageCurrRaw,
