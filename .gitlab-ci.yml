@@ -1,0 +1,26 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+stages:
+  - check
+  - build
+
+image: registry.gitlab.com/matrixai/engineering/maintenance/gitlab-runner
+
+lint:
+  stage: check
+  script:
+    - >
+        nix-shell -I nixpkgs=./pkgs.nix --packages nodejs --run '
+        npm install;
+        npm run lint;
+        '
+
+test:
+  stage: check
+  script:
+    - >
+        nix-shell -I nixpkgs=./pkgs.nix --packages nodejs --run '
+        npm install;
+        npm run test;
+        '

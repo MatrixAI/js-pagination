@@ -1,36 +1,35 @@
-{
-  pkgs ? import ./pkgs.nix,
-  nodeVersion ? "10_x",
-}:
-  with pkgs;
-  let
-    nodePackages = lib.getAttrFromPath
-                   (lib.splitString "." ("nodePackages_" + nodeVersion))
-                   pkgs;
-    drv = import ./default.nix { inherit pkgs nodeVersion; };
-  in
-    drv.overrideAttrs (attrs: {
-      src = null;
-      nativeBuildInputs = [ nodePackages.node2nix ]
-                          ++ (lib.attrByPath [ "nativeBuildInputs" ] [] attrs);
-      shellHook = ''
-        echo 'Entering ${attrs.name}'
-        set -o allexport
-        . ./.env
-        set +o allexport
-        set -v
-        export PATH="$(pwd)/dist/bin:$(npm bin):$PATH"
+{ pkgs ? import ./pkgs.nix {} }:
 
-        # setting up for nix-build
-        npm install --package-lock-only
-        node2nix \
-          --input package.json \
-          --lock package-lock.json \
-          --node-env node-env.nix \
-          --output node-packages.nix \
-          --composition package.nix \
-          --nodejs-10
+with pkgs;
+let
+  drv = callPackage ./default.nix {};
+  nodeVersion = builtins.elemAt (lib.versions.splitVersion drv.nodejs.version) 0;
+in
+  drv.overrideAttrs (attrs: {
+    src = null;
+    nativeBuildInputs = [
+      nodePackages.node2nix
+    ] ++ (lib.attrByPath [ "nativeBuildInputs" ] [] attrs);
+    shellHook = ''
+      echo 'Entering ${attrs.name}'
+      set -o allexport
+      . ./.env
+      set +o allexport
+      set -v
 
-        set +v
-      '';
-    })
+      export PATH="$(pwd)/dist/bin:$(npm bin):$PATH"
+
+      npm install
+      node2nix \
+        --input package.json \
+        --lock package-lock.json \
+        --node-env ./nix/node-env.nix \
+        --output ./nix/node-packages.nix \
+        --composition ./nix/default.nix \
+        --nodejs-${nodeVersion}
+
+      mkdir --parents "$(pwd)/tmp"
+
+      set +v
+    '';
+  })
