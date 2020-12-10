@@ -46,11 +46,13 @@ There can be an extra parameter called `sort` that would sort the results accord
 
 Cursor pagination does not allow random access of the pages. You can however randomly access if you know the seek key you want.
 
-## Development
+## Publishing
 
 ```sh
-type='patch'
+# npm login
+npm version patch # major/minor/patch
 npm run build
-npm version $type
-npm publish
+npm publish --access public
+git push
+git push --tags
 ```
