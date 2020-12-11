@@ -92,7 +92,7 @@ function pageCurr<I extends Iterable<[S, any]>, S>(
   limit?: number,
 ): Promise<Pagination<I, S>>;
 function pageCurr(page: any, fetch: any, limit?: any): any {
-  const query = pageCurr(page, limit);
+  const query = pageCurr_(page, limit);
   return processFetch(fetch, query);
 }
 
@@ -141,7 +141,7 @@ function pagePrev<I extends Iterable<[S, any]>, S>(
   limit?: number,
 ): Promise<Pagination<I, S>>;
 function pagePrev(page: any, fetch: any, limit?: any): any {
-  const query = pagePrev(page, limit);
+  const query = pagePrev_(page, limit);
   return processFetch(fetch, query);
 }
 
@@ -184,7 +184,7 @@ function pageNext<I extends Iterable<[S, any]>, S>(
   limit?: number,
 ): Promise<Pagination<I, S>>;
 function pageNext(page: any, fetch: any, limit?: any): any {
-  const query = pageNext(page, limit);
+  const query = pageNext_(page, limit);
   return processFetch(fetch, query);
 }
 
