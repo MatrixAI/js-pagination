@@ -1,6 +1,6 @@
 {
   "name": "@matrixai/pagination",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Offset-based and cursor-based pagination utilities",
   "keywords": [
     "pagination",
