@@ -58,8 +58,8 @@ type FetchSync<I, S> = (query: Query<S>) => FetchResult<I, S>;
 type FetchAsync<I, S> = (query: Query<S>) => Promise<FetchResult<I, S>>;
 type FetchResult<I, S> = Readonly<{
   length: number;
-  seekFirst?: S;
-  seekLast?: S;
+  firstSeek?: S;
+  lastSeek?: S;
   items: I;
 }>;
 
