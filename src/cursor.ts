@@ -8,7 +8,7 @@ class ErrorPagination extends CustomError {}
 
 type Pagination<I extends Iterable<[S, any]>, S> = Readonly<
   | {
-      order: true;
+      direction: true;
       seek?: S;
       limit?: number;
       length: number;
@@ -17,7 +17,7 @@ type Pagination<I extends Iterable<[S, any]>, S> = Readonly<
       items: I;
     }
   | {
-      order: false;
+      direction: false;
       seek?: S;
       limit?: number;
       length: number;
@@ -26,7 +26,7 @@ type Pagination<I extends Iterable<[S, any]>, S> = Readonly<
       items: I;
     }
   | {
-      order: null;
+      direction: null;
       seekAfter: S;
       seekBefore: S;
       firstSeek?: S;
@@ -43,12 +43,12 @@ type Pagination<I extends Iterable<[S, any]>, S> = Readonly<
  * Instead it relies on the firstSeek and lastSeek derived from items.
  */
 type QuerySeekLimit<S> = Readonly<{
-  order: boolean;
+  direction: boolean;
   seek?: S;
   limit?: number;
 }>;
 type QuerySeekAfterBefore<S> = Readonly<{
-  order: null;
+  direction: null;
   seekAfter: S;
   seekBefore: S;
 }>;
@@ -104,23 +104,23 @@ function pageCurr_<I extends Iterable<[S, any]>, S>(
   page: Pagination<I, S>,
   limit?: number,
 ): Query<S> {
-  if (page.order === true) {
+  if (page.direction === true) {
     const limitNew = limit != null ? limit : page.limit;
     return {
-      order: true,
+      direction: true,
       seek: page.seek,
       limit: limitNew,
     };
-  } else if (page.order === false) {
+  } else if (page.direction === false) {
     const limitNew = limit != null ? limit : page.limit;
     return {
-      order: false,
+      direction: false,
       seek: page.seek,
       limit: limitNew,
     };
   } else {
     return {
-      order: null,
+      direction: null,
       seekAfter: page.seekAfter,
       seekBefore: page.seekBefore,
     };
@@ -158,13 +158,13 @@ function pagePrev_<I extends Iterable<[S, any]>, S>(
     throw new ErrorPagination('Cannot paginate from an empty page');
   }
   let limitNew;
-  if (page.order === null) {
+  if (page.direction === null) {
     limitNew = limit != null ? limit : page.length;
   } else {
     limitNew = limit != null ? limit : page.limit;
   }
   return {
-    order: false,
+    direction: false,
     seek: page.firstSeek,
     limit: limitNew,
   };
@@ -201,13 +201,13 @@ function pageNext_<I extends Iterable<[S, any]>, S>(
     throw new ErrorPagination('Cannot paginate from an empty page');
   }
   let limitNew;
-  if (page.order === null) {
+  if (page.direction === null) {
     limitNew = limit != null ? limit : page.length;
   } else {
     limitNew = limit != null ? limit : page.limit;
   }
   return {
-    order: true,
+    direction: true,
     seek: page.lastSeek,
     limit: limitNew,
   };
