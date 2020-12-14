@@ -6,7 +6,7 @@ Offset pagination relies on a seek and limit number.
 
 Consider the resource we are paginating is:
 
-```ts
+```
 ['A', 'B', 'C', 'D']
 ```
 
@@ -26,14 +26,14 @@ Cursor pagination relies on unique orderable seek key.
 
 Consider the resource we are paginating is:
 
-```ts
-['A', 'B', 'C', 'D']
+```
+['A', 'B', 'C', 'D', 'E']
 ```
 
-Assume that the seek key is `[0, 1, 2, 3]`:
+Assume that the seek key is `[0, 1, 2, 3, 4]`:
 
 * Using `order = true`, `seek = 0` and `limit = 2`, you would get `['B', 'C']`.
-* Using `order = false`, `seek = 2` and `limit = 2`, you would get `['A', 'B']`.
+* Using `order = false`, `seek = 3` and `limit = 2`, you would get `['B', 'C']`.
 * Using `order = null`, `seekAfter = 1`, `seekBefore = 3`, you would get `['C']`.
 
 Notice that the `seek`, `seekStart` and `seekEnd` are all exclusive. This is required so that paging doesn't show results that overlap with existing results. This is because the next or previous page is fetched by using the seek key of the first or last item.
