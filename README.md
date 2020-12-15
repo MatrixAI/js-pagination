@@ -4,7 +4,7 @@
 
 The seek index or key must be totally-ordered and strictly monotonic. If the seek index or key is not strictly monotonic, it's possible to skip items when doing the pagination because the seek in cursor pagination is assumed to be exclusive. If it is not totally ordered, then pagination may not be consistent as certain items may move ahead or behind on depending on non-deterministic factors.
 
-If you are using date or timestamps as the as the seek, you must realise that JavaScript `Date` object only has up to millisecond precision. If you are storing more precise timestamps, during the comparison operation for pagination, you must do the comparison at millisecond precision because when JavaScript is sending timestamps to the server, it would only produce millisecond precise timestamps. Alternatively you can ensure that your backend is only storing millisecond precise timestamps.
+If you are using date or timestamps as the as the seek, you must realise that JavaScript `Date` object only has up to millisecond precision. If you are storing more precise timestamps, during the comparison operation for pagination, you must do the comparison at millisecond precision because when JavaScript is sending timestamps to the server, it would only produce millisecond precise timestamps. Alternatively you can ensure that your backend is only storing only millisecond precise timestamps.
 
 ## Offset
 
