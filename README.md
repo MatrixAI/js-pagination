@@ -42,7 +42,7 @@ Assume that the seek key is `[0, 1, 2, 3, 4]`:
 * Using `direction = false`, `seek = 3` and `limit = 2`, you would get `['B', 'C']`.
 * Using `direction = null`, `seekAfter = 1`, `seekBefore = 3`, you would get `['C']`.
 
-Notice that the `seek`, `seekStart` and `seekEnd` are all exclusive. This is required so that paging doesn't show results that overlap with existing results. This is because the next or previous page is fetched by using the seek key of the first or last item.
+Notice that the `seek`, `seekAfter` and `seekBefore` are all exclusive. This is required so that paging doesn't show results that overlap with existing results. This is because the next or previous page is fetched by using the seek key of the first or last item.
 
 Therefore to get the `['A']`, you would need to seek with `0 - 1`. Or at least some way of subtracting the seek key.
 
